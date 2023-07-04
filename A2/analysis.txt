@@ -1,0 +1,47 @@
+"Train model without attention"
+Epoch 1: loss=0.026639359071850777, BLEU=0.23553515656147106
+Epoch 2: loss=0.019120777025818825, BLEU=0.26658240207733375
+Epoch 3: loss=0.015485679730772972, BLEU=0.279550409050096
+Epoch 4: loss=0.012733153067529202, BLEU=0.29084679424616844
+Epoch 5: loss=0.010613900609314442, BLEU=0.2953108283372596
+Finished 5 epochs
+
+
+"Train model with attention"
+Epoch 1: loss=0.02478291653096676, BLEU=0.2784583385553176
+Epoch 2: loss=0.01656223274767399, BLEU=0.3060527090083014
+Epoch 3: loss=0.012905611656606197, BLEU=0.3185820810100803
+Epoch 4: loss=0.010305778123438358, BLEU=0.3237919214629833
+Epoch 5: loss=0.008419597521424294, BLEU=0.32602977133246275
+Finished 5 epochs
+
+
+"Train model with multi head attention"
+Epoch 1: loss=0.024968842044472694, BLEU=0.27247486315550745
+Epoch 2: loss=0.017148282378911972, BLEU=0.30107236035236684
+Epoch 3: loss=0.014014143496751785, BLEU=0.3074596088976423
+Epoch 4: loss=0.011839156039059162, BLEU=0.3195298639777189
+Epoch 5: loss=0.010243147611618042, BLEU=0.32417049009773435
+Finished 5 epochs
+
+
+"Test model without attention"
+The average BLEU score over the test set was 0.3295703585417523
+
+
+"Test model with attention"
+The average BLEU score over the test set was 0.3630161425685418
+
+
+"Test model with multi head attention"
+The average BLEU score over the test set was 0.37020704365970203
+
+
+The average BLEU score in both train and test is not prefect but at least it has learned enough that shows a bleu score of around the range 0.3 in both data sets. One observation is that the average bleu score of the test set is higher than the one of the training set in all cases of with/without attention. This is despite the point that we usually expect that the training set’s results be better than the test set’s. The reason why this is happenning here can be:
+1. Probably the data set that is chosen for the test has features that was easier to predict according to what model has learned in training.
+2. It could be that the trained model has generalized well and that is why it has a good accuracy in test set as well.
+3. Or it could be that the way we validate the results of the performance of the model is flawed. The point is that we only use one split of train/test at the beginning, however as we learned in A1, it is always the best if we could use k-fold cross validation method to test our model on every partition and make sure the accuracy that we get is consistent. It would also be good if we did that for different decoder cell types to see how the model’s accuracy get affected.
+
+One other observation is that, as expected the bleu score of the model with attention is higher than the one without attention. This is certainly since in "with attention” model we try to learn a better prior of what words are more related to keep in mind and what to forget, by making use of a context vector. A better prior probability helps to have better predicted logits. Another point is that, although we try to have a stronger approach of what to learn/forget in multi headed attention, the results of multiple head model is only 0.01 higher than the model with attention. This observation may suggests that using multiple heads for attention (specially using very high number of heads as one might expect) would not necessarily improve the model’s performance very much. In fact, in certain cases it could just be a waste of memory and computation if we use too many heads.
+
+One other point is that the number of epochs that we used for training the model was 5. Since the best number of epochs to train is a hyper parameter, we could have probably see better accuracy on test data if we had used more number of epochs. I did not try that because of time constraints, however this is for sure a point to consider.

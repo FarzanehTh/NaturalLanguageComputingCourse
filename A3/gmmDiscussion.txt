@@ -1,0 +1,50 @@
+
+**** Changing M:
+# speakers       M      maxIter     epsilon     accuracy
+32               2         20         0.0           1.0
+32               8         20         0.0           1.0
+32               12        20         0.0           1.0
+32               18        20         0.0           1.0
+32               20        20         0.0           1.0
+
+ In this experiment, I checked the performance of the model with the values of M equal to 2, 8, 12, 18, 20 (while other parameters unchanged). The result is that the accuracy remained equal to 1, regardless of the M value. However, one observation was that when the value of M is 2, the model usually produced lower likelihood values, overall for each speaker. However, since the accuracy of the model was still 1 in this case, I can conclude using a lower number of components like M = 2 is still good enough, as probably the data points are not that much complex. Similarly, using greater value for M (like 18 or 20),  causes the likelihood probabilities of the data to go down significantly(although we still get the accuracy of 1). That means the GMM models with a great number for M is not necessary. As a result, I think, using a small value of M is enough for capturing the features of the data and having an accurate classification for this specific task.
+______________________________________________________________________________________
+**** Changing maxIter:
+# speakers       M      maxIter     epsilon     accuracy
+32               8         10         0.0           1.0
+32               8         20         0.0           1.0
+32               8         40         0.0           1.0
+
+ In this experiment, I changed the maxIter parameter to have the values 10, 20, 40 while epsilon value to remain 0.0. Again the accuracy remained equal to 1. Decreasing the value of maxIter to 10 causes the probability likelihood of data to decrease. Increasing maxIter to 40,  did not change the probability likelihood so much, compared to maxIter of 20. That could be as we have not changed the epsilon value and the improvement value in the loop of training is very sensitive to a slight decrease in probability likelihood and it stops early. So maybe the remedy here would be to consider a higher epsilon value to benefit from more number of iterations.
+______________________________________________________________________________________
+**** Changing number of speakers(decreased number of speakers for both train and test) :
+# speakers       M      maxIter     epsilon     accuracy
+4                8         20          0.0         1.0
+8                8         20          0.0         1.0
+16               8         20          0.0         1.0
+32               8         20          0.0         1.0
+
+In this experiment, I trained and tested on different numbers of speakers. The results showed that regardless of the number of speakers
+the accuracy remained 1.0. That indicates that the MFCC features belonging to a specific speaker have been captured in
+its GMM well enough, that no matter among how many GMM we would have to find the best, the GMM of the target can be found accurately.
+______________________________________________________________________________________
+
+Questions:
+
+*** How might you improve the classification accuracy of the Gaussian mixtures, without adding more training data?
+
+As discussed above, finding the best hyper-parameters M, maxIter and epsilon will certainly affect having GMM models that can assign greater probability to their class data. Although, since we have considered a constant sized dataset, we should tune them in such a way that can be representative of the number of data that is available(i,e: check the validation loss to avoid overfitting). Other parameters we can change and see their effect on accuracy can be the initializations of model parameters(omega, sigma and mu) and more importantly trying to start the EM algorithm on different initialization of those((using k-means for example). That is because EM might give us local maxima and not necessarily the global one.
+
+______________________________________________________________________________________
+*** When would your classifier decide that a given test utterance comes from none of the trained speaker models, and how would your classifier come to this decision?
+
+One possible strategy is to consider a threshold likelihood for inference, such that if at test time, the calculated likelihood is less than a threshold, then the result is that the MFCC vector belongs to none of the speakers.
+
+______________________________________________________________________________________
+*** Can you think of some alternative methods for doing speaker identification that don’t use Gaussian mixtures?
+
+Different possible methods can be:
+Using Naive Bayes’ classification: As in Naive Bayes we also assume independence between features of the data vector(same as here), we can use it to classify the MFCC vectors as well. Also Native Bayes works well with a small data set which is good.
+Using a Neural Network: We could also use a discriminative approach like a NN to assign probabilities of p(S_i | x) to each x vector and we could consider the speaker with highest probability as the predicted speaker.
+Using k-means: as seen above, we can see a high accuracy of 1.0 even when we use M = 2 components, so maybe using a hard assignment clustering approach(ie, k-means) could be as good as a GMM.
+
